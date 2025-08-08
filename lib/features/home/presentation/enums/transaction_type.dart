@@ -1,0 +1,1 @@
+enum TransactionType{incoming,outgoing,withdraw}
