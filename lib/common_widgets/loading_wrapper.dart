@@ -5,6 +5,7 @@ import 'package:finance_house/common_widgets/progress_bar.dart';
 
 class LoadingWrapper extends StatelessWidget {
   final Widget child;
+  final bool isLoading =false;
 
   const LoadingWrapper({
     super.key,
@@ -28,7 +29,7 @@ class LoadingWrapper extends StatelessWidget {
 
 @lazySingleton
 class LoadingCubit extends Cubit<bool> {
-  LoadingCubit() : super(false);
+  LoadingCubit() : super(true);
 
   void showLoading() => emit(true);
   void hideLoading() => emit(false);

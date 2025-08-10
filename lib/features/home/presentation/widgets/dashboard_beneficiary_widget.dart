@@ -74,7 +74,7 @@ class DashboardBeneficiaryWidget extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.only(right: 20.w),
                     color: Colors.red,
-                    child: Icon(Icons.delete, color: Colors.white),
+                    child: const Icon(Icons.delete, color: Colors.white),
                   ),
                   confirmDismiss: (_) async {
                     if (userId == null || benId == null) return false;

@@ -18,12 +18,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-      if (state.status == HomeStatus.loading || state.user == null) {
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
-      }
+      final lc = context.read<LoadingCubit>();
 
+      if (state.status == HomeStatus.loading || state.user == null) {
+        return LoadingWrapper(
+            child: Container(
+          color: AppColors.white,
+        ));
+      }
+      lc.hideLoading();
       return LoadingWrapper(
         child: Scaffold(
           body: Column(
@@ -51,14 +54,6 @@ class HomeScreen extends StatelessWidget {
                             const CustomDivider(),
                             const DashboardBeneficiaryWidget(),
                             const CustomDivider(),
-                            SizedBox(height: 10.h),
-                            Text(
-                              "TRANSACTIONS",
-                              style: AppTextStyles.textMedium14.copyWith(
-                                color: AppColors.greyColor,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
                             const DashboardTransactionsPreviewWidget(),
                             SizedBox(height: 10.h),
                           ],

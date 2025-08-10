@@ -1,4 +1,5 @@
 import 'package:finance_house/common_widgets/loading_wrapper.dart';
+import 'package:finance_house/core/di/app_bindings.dart';
 import 'package:finance_house/core/utils/toast_utils.dart';
 import 'package:finance_house/features/home/domain/entitites/user_data.dart';
 import 'package:finance_house/features/transfer/domain/dto/send_money_request.dart';
@@ -33,55 +34,61 @@ class TransferScreen extends HookWidget {
       });
       return null;
     }, []);
-    return LoadingWrapper(
-      child: BlocConsumer<TransferCubit, TransferState>(
-        listener: (context, state) {
-          if (state is TransferLoaded) {
-            amountController.text = state.selectedAmount?.toString() ?? '';
-          }
-        },
-        builder: (context, state) {
-          final selectedAmount =
-              state is TransferLoaded ? state.selectedAmount : null;
-          return Scaffold(
-            body: SafeArea(
-              bottom: false,
-              child: TransferPageBody(
-                  formKey: _formKey,
-                  amountController: amountController,
-                  selectedAmount: selectedAmount,
-                  footerHeight: footerHeight.value,
-                  userData: userData),
-            ),
-            bottomSheet: TransferPageFooter(
-              footerKey: footerKey,
-              selectedAmount: selectedAmount,
-              formKey: _formKey,
-              onTransferTap: ()async {
-                if(userData.topupLimit<=0){
-                  showToast(message: "TopUp Limit Exceed", type: AlertType.error);
-                }else if(selectedAmount!+3>userData.beneficiary.limit!){
-                  showToast(message: "Beneficiary topUp limit Exceed", type: AlertType.error);
-                }
-                else if(selectedAmount+3>userData.balance){
-                  showToast(message: "Beneficiary topUp limit Exceed", type: AlertType.error);
-                }
-
-                else {
-                  final lc = context.read<LoadingCubit>();
-                  lc.showLoading();
-                  await context.read<TransferCubit>().transferAmount(SendMoneyRequest(
-                      userId: userData.id,
-                      beneficiaryId: userData.beneficiary.id!,
-                      amount: selectedAmount+3));//+3 fee we can mange it from beckend as well
-                  lc.hideLoading();
-                  GoRouter.of(context).pop(true);
-                }
-              },
-            ),
-          );
-        },
+    return BlocProvider(
+      create: (context) => getIt<TransferCubit>(),
+      child: LoadingWrapper(
+        child: BlocConsumer<TransferCubit, TransferState>(
+          listener: (context, state) {
+            if (state is TransferLoaded) {
+              amountController.text = state.selectedAmount?.toString() ?? '';
+            }
+          },
+          builder: (context, state) {
+            final selectedAmount =
+                state is TransferLoaded ? state.selectedAmount : null;
+            return Scaffold(
+              body: SafeArea(
+                bottom: false,
+                child: TransferPageBody(
+                    formKey: _formKey,
+                    amountController: amountController,
+                    selectedAmount: selectedAmount,
+                    footerHeight: footerHeight.value,
+                    userData: userData),
+              ),
+              bottomSheet: TransferPageFooter(
+                footerKey: footerKey,
+                selectedAmount: selectedAmount,
+                formKey: _formKey,
+                onTransferTap: () =>
+                    onTransferTap(context, selectedAmount ?? 0),
+              ),
+            );
+          },
+        ),
       ),
     );
+  }
+
+  void onTransferTap(BuildContext context, int selectedAmount) async {
+    if (userData.topupLimit <= 0) {
+      showToast(message: "TopUp Limit Exceed", type: AlertType.error);
+    } else if (selectedAmount! + 3 > userData.beneficiary.limit!) {
+      showToast(
+          message: "Beneficiary topUp limit Exceed", type: AlertType.error);
+    } else if (selectedAmount + 3 > userData.balance) {
+      showToast(
+          message: "Beneficiary topUp limit Exceed", type: AlertType.error);
+    } else {
+      final loadingCubit = context.read<LoadingCubit>();
+      loadingCubit.showLoading();
+      await context.read<TransferCubit>().transferAmount(SendMoneyRequest(
+            userId: userData.id,
+            beneficiaryId: userData.beneficiary.id!,
+            amount: selectedAmount + 3,
+          )); //+3 fee we can mange it from backend as well
+      loadingCubit.hideLoading();
+      GoRouter.of(context).pop(true);
+    }
   }
 }

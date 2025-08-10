@@ -7,9 +7,7 @@ import 'package:finance_house/features/transfer/presentation/cubit/transfer_cubi
 
 List<BlocProvider> createProviders() {
   return [
-     BlocProvider<HomeCubit>(create: (_) => getIt<HomeCubit>()),
-     BlocProvider<TransferCubit>(create: (_) => getIt<TransferCubit>()),
-     BlocProvider<LoadingCubit>(create: (_) => getIt<LoadingCubit>()),
-     BlocProvider<AddBeneficiaryCubit>(create: (_) => getIt<AddBeneficiaryCubit>()),
+    BlocProvider<HomeCubit>(create: (_) => getIt<HomeCubit>()),
+    BlocProvider<LoadingCubit>(create: (_) => getIt<LoadingCubit>()),
   ];
 }

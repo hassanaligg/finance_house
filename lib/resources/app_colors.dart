@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // all colors not setup properly because of time
-
-  //Generic Colors
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Colors.black;
   static const Color transparent = Colors.transparent;

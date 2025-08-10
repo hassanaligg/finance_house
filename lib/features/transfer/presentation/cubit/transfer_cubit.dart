@@ -34,6 +34,7 @@ class TransferCubit extends Cubit<TransferState> {
       },
       (response) {
         showToast(message: "Topup Successfull", type: AlertType.success);
+        
       },
     );
   }
